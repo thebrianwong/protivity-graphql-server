@@ -1,5 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
+import "dotenv/config";
 
 const typeDefs = `#graphql
   type AiText {
