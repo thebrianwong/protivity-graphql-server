@@ -6,8 +6,8 @@ import {
 
 // Initialize Vertex with your Cloud project and location
 const vertex_ai = new VertexAI({
-  project: process.env.GOOGLE_CLOUD_PROJECT,
-  location: process.env.GOOGLE_CLOUD_LOCATION,
+  project: process.env.GOOGLE_CLOUD_PROJECT!,
+  location: process.env.GOOGLE_CLOUD_LOCATION!,
 });
 const model = "gemini-pro";
 

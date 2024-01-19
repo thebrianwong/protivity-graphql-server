@@ -7,11 +7,12 @@ import http from "http";
 import cors from "cors";
 import { typeDefs } from "./schema/schema.js";
 import { resolvers } from "./resolvers/query.js";
+import { ApolloServerContext } from "./types/apolloServerContext.js";
 
 const app = express();
 const httpServer = http.createServer(app);
 
-const server = new ApolloServer({
+const server = new ApolloServer<ApolloServerContext>({
   typeDefs,
   resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
