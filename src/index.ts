@@ -1,6 +1,7 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import "dotenv/config";
+import { generateContent } from "./resolvers/generateContent.js";
 
 const typeDefs = `#graphql
   type AiText {
@@ -8,23 +9,16 @@ const typeDefs = `#graphql
   }
 
   type Query {
-    generatedText(duration: Int!): AiText!
+    aiText(duration: Int!): AiText!
   }
 `;
-
-const dummy = {
-  content: "Dummy text",
-};
-
-const testFun = (num: Number) => {
-  return { content: `wow you had the number ${num} man!!!` };
-};
 
 // Resolvers define how to fetch the types defined in your schema.
 // This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    generatedText: (parent, args, contextValue, info) => testFun(args.duration),
+    aiText: (parent, args, contextValue, info) =>
+      generateContent(args.duration),
   },
 };
 
