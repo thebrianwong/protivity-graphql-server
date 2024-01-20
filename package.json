@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "compile": "tsc",
-    "start": "npm run compile && node ./dist/index.js"
+    "generate": "graphql-codegen --config codegen.ts",
+    "compile": "npm run generate && tsc",
+    "start": "npm run compile && node ./dist/index.js",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "keywords": [],
   "author": "",
@@ -20,8 +22,12 @@
     "graphql": "^16.8.1"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/typescript": "4.0.1",
+    "@graphql-codegen/typescript-resolvers": "4.0.1",
     "@types/cors": "^2.8.17",
     "@types/node": "^20.11.3",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "@graphql-codegen/introspection": "4.0.0"
   }
 }
