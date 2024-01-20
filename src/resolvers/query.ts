@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from "graphql";
-import { generateContent } from "./generateContent.js";
+import { generateContent } from "./generateContent";
 import {
   AiText,
   QueryAiTextArgs,
