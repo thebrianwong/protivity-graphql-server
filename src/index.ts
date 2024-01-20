@@ -6,7 +6,6 @@ import { readFileSync } from "fs";
 import express from "express";
 import http from "http";
 import cors from "cors";
-// import { typeDefs } from "./schema/schema.js";
 import { resolvers } from "./resolvers/query.js";
 import { ApolloServerContext } from "./types/apolloServerContext.js";
 
