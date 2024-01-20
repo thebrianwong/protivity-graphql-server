@@ -1,7 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { expressMiddleware } from "@apollo/server/express4";
-// import "dotenv/config";
 import { readFileSync } from "fs";
 import express from "express";
 import http from "http";
