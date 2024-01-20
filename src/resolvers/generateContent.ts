@@ -3,6 +3,7 @@ import {
   HarmCategory,
   VertexAI,
 } from "@google-cloud/vertexai";
+import "dotenv/config";
 
 // Initialize Vertex with your Cloud project and location
 const vertex_ai = new VertexAI({
