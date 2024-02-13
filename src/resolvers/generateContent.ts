@@ -1,47 +1,32 @@
-import {
-  HarmBlockThreshold,
-  HarmCategory,
-  VertexAI,
-} from "@google-cloud/vertexai";
+import { GenerateContentResponse } from "@google-cloud/vertexai";
 import "dotenv/config";
+import "google-auth-library";
+import { GoogleAuth } from "google-auth-library";
 
-// Initialize Vertex with your Cloud project and location
-const vertex_ai = new VertexAI({
-  project: process.env.GOOGLE_CLOUD_PROJECT!,
-  location: process.env.GOOGLE_CLOUD_LOCATION!,
-});
-const model = "gemini-pro";
+const getServiceAccountToken = async () => {
+  const keyFileContent = JSON.parse(process.env.SERVICE_ACCOUNT_KEY!);
 
-// Instantiate the models
-const generativeModel = vertex_ai.preview.getGenerativeModel({
-  model,
-  generation_config: {
-    max_output_tokens: 2048,
-    temperature: 1,
-    top_p: 1,
-  },
-  safety_settings: [
-    {
-      category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-      threshold: HarmBlockThreshold.BLOCK_NONE,
-    },
-    {
-      category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-      threshold: HarmBlockThreshold.BLOCK_NONE,
-    },
-    {
-      category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-      threshold: HarmBlockThreshold.BLOCK_NONE,
-    },
-    {
-      category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-      threshold: HarmBlockThreshold.BLOCK_NONE,
-    },
-  ],
-});
+  try {
+    const auth = new GoogleAuth({
+      credentials: keyFileContent,
+      scopes: ["https://www.googleapis.com/auth/cloud-platform"],
+    });
+
+    const client = await auth.getClient();
+    const accessToken = await client.getAccessToken();
+
+    return accessToken;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log("Error obtaining access token: ", error.message);
+    } else if (typeof error === "string") {
+      console.error("Error obtaining access token: ", error);
+    }
+  }
+};
 
 const generateContent = async (readingDuration: Number) => {
-  const req = {
+  const request = {
     contents: [
       {
         role: "user",
@@ -54,14 +39,20 @@ const generateContent = async (readingDuration: Number) => {
     ],
   };
 
-  const streamingResp = await generativeModel.generateContentStream(req);
+  const aiAPIEndpoint = `https://${process.env.API_ENDPOINT}/v1/projects/${process.env.PROJECT_ID}/locations/${process.env.LOCATION_ID}/publishers/google/models/${process.env.MODEL_ID}:generateContent`;
+  const authToken = await getServiceAccountToken();
 
-  let content = "";
+  const response = await fetch(aiAPIEndpoint, {
+    method: "post",
+    headers: new Headers({
+      Authorization: `Bearer ${authToken?.token}`,
+      "Content-Type": "application/json",
+    }),
+    body: JSON.stringify(request),
+  });
+  const parsedResponse = (await response.json()) as GenerateContentResponse;
 
-  for await (const item of streamingResp.stream) {
-    const genTextSnippet = item.candidates[0].content.parts[0].text;
-    content += genTextSnippet;
-  }
+  const content = parsedResponse.candidates[0].content.parts[0].text;
 
   return { content };
 };
