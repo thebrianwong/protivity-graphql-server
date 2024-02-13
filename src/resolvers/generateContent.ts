@@ -1,4 +1,9 @@
-import { GenerateContentResponse } from "@google-cloud/vertexai";
+import {
+  GenerateContentRequest,
+  GenerateContentResponse,
+  HarmBlockThreshold,
+  HarmCategory,
+} from "@google-cloud/vertexai";
 import "dotenv/config";
 import "google-auth-library";
 import { GoogleAuth } from "google-auth-library";
@@ -37,7 +42,30 @@ const generateContent = async (readingDuration: Number) => {
         ],
       },
     ],
-  };
+    generation_config: {
+      max_output_tokens: 2048,
+      temperature: 1,
+      top_p: 1,
+    },
+    safety_settings: [
+      {
+        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+    ],
+  } as GenerateContentRequest;
 
   const aiAPIEndpoint = `https://${process.env.API_ENDPOINT}/v1/projects/${process.env.PROJECT_ID}/locations/${process.env.LOCATION_ID}/publishers/google/models/${process.env.MODEL_ID}:generateContent`;
   const authToken = await getServiceAccountToken();
