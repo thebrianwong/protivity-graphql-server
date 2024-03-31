@@ -4,10 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "generate": "graphql-codegen --config ./src/codegen.ts",
-    "compile": "npm run generate && tsc",
-    "start": "npm run compile && node ./dist/index.js",
-    "test": "npm run compile && jest --watchAll --detectOpenHandles"
+    "start": "node ./dist/index.js",
+    "test": "jest --watchAll --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
