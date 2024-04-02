@@ -30,7 +30,7 @@ const getServiceAccountToken = async () => {
   }
 };
 
-const generateContent = async (readingDuration: Number) => {
+const generateContent = async (readingDuration: number) => {
   try {
     const request = {
       contents: [

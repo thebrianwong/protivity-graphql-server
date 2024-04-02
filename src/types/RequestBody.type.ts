@@ -1,5 +1,5 @@
 type RequestBody = {
-  duration: Number;
+  duration: number;
 };
 
 export default RequestBody;
