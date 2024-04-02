@@ -1,29 +1,21 @@
-import { ApolloServer } from "@apollo/server";
-import { ApolloServerContext } from "../types/apolloServerContext";
-import { readFileSync } from "fs";
-import { resolvers } from "../resolvers/query";
+import { handler } from "../index";
+import * as generateContent from "../generateContent";
 
-test("The server responds with generated text", async () => {
-  const typeDefs = readFileSync("./src/schema/schema.graphql", {
-    encoding: "utf-8",
+test("The Lambda has a 200 status code", async () => {
+  const res = await handler({ duration: 20 });
+  expect(res).toHaveProperty("statusCode", 200);
+});
+
+test("The Lambda returns with content", async () => {
+  const res = await handler({ duration: 20 });
+  expect(res).toHaveProperty("body");
+});
+
+test("The Lambda has a 500 status code and error if an error occurs", async () => {
+  jest.spyOn(generateContent, "generateContent").mockImplementationOnce(() => {
+    throw Error("Something went wrong!");
   });
-
-  const server = new ApolloServer<ApolloServerContext>({
-    typeDefs,
-    resolvers,
-  });
-
-  const response = await server.executeOperation({
-    query:
-      "query Query($duration: Int!) { aiText(duration: $duration) {content}}",
-    variables: { duration: 20 },
-  });
-
-  expect(response).toHaveProperty([
-    "body",
-    "singleResult",
-    "data",
-    "aiText",
-    "content",
-  ]);
+  const res = await handler({ duration: 20 });
+  expect(res).toHaveProperty("statusCode", 500);
+  expect(res).toHaveProperty("error", Error("Something went wrong!"));
 });
