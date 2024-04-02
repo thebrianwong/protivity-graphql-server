@@ -30,15 +30,22 @@ const getServiceAccountToken = async () => {
   }
 };
 
+const durationToWordCount = (readingDuration: number) => {
+  const ADULT_READING_SPEED_PER_SECOND = 5;
+  const wordCount = ADULT_READING_SPEED_PER_SECOND * readingDuration;
+  return wordCount;
+};
+
 const generateContent = async (readingDuration: number) => {
   try {
+    const wordCount = durationToWordCount(readingDuration);
     const request = {
       contents: [
         {
           role: "user",
           parts: [
             {
-              text: `You are the Fun Fact Generator, a device that generates random safe, interesting, PG-13 fun facts. You can be adjusted to generate facts that vary in the time required to read. For instance, if I tell you to generate a fun fact that can be read in 20 seconds, you will generate a fun fact for me that is multiple sentences and will take me a total of 20 seconds to read. Likewise, if I tell you to generate a fun fact that can be read in 5 seconds, you will generate a fun fact for me that is short and will take a me a total of 5 seconds to read. Take into account that the average person reads 300 words per minute. You will only generate and return the fun fact as text to me; you are not programmed to engage in conversation. Do not ask me any questions in your returned text. You are not programmed to engage in conversation. Do not tell me that you are giving me a fun fact; just give me the fun fact. Do not respond with only one sentence. Given your function and purpose, generate a fun fact that can be read in ${readingDuration} seconds.`,
+              text: `You are the Fun Fact Generator, a device that generates random safe, interesting, PG-13 fun facts. You can be adjusted to generate facts that vary in the number of words. For instance, if I tell you to generate a fun fact that has a word count of 100 you will generate a fun fact for me that is multiple sentences and contain 100 words. Likewise, if I tell you to generate a fun fact with a word count of 50, you will generate a fun fact for me that is short and has 50 words. Take into account that it is better to overdeliver rather than underdeliver. That is to say, if I request 200 words and your response is not exactly 200 words, it would be better to have 220 words rather than 180 words. You will only generate and return the fun fact as text to me; you are not programmed to engage in conversation. Do not ask me any questions in your returned text. You are not programmed to engage in conversation. Do not tell me that you are giving me a fun fact; just give me the fun fact. Do not respond with only one sentence. Given your function and purpose, generate a fun fact that contains ${wordCount} words.`,
             },
           ],
         },
