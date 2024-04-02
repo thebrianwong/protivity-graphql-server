@@ -1,5 +1,5 @@
 import { generateContent } from "./generateContent.js";
-import RequestBody from "./types/RequestBody.type";
+import RequestBody from "./types/requestBody.type";
 
 export const handler = async (event: RequestBody) => {
   try {
